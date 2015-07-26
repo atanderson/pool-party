@@ -1,0 +1,87 @@
+@import url('../../bower_components/bootstrap/dist/css/bootstrap.min.css');
+
+$white: #FFFFFF;
+$sand: #FFFFEB;
+$mutedBlue: #94B8FF;
+$mutedBlack: #333333;
+$mutedRed: #FF8484;
+$mutedGreen: #80E6B2;
+$mutedWhite: #EEEEEE;
+$mutedRust: #EBE0D6;
+
+.card {
+    cursor: pointer;
+    height: 50px;
+
+    &[data-color="White"] {
+        background: $sand;
+    }
+
+    &[data-color="Blue"] {
+        background: $mutedBlue;
+    }
+
+    &[data-color="Black"] {
+        background: $mutedBlack;
+        color: $white;
+    }
+
+    &[data-color="Red"] {
+        background: $mutedRed;
+    }
+
+    &[data-color="Green"] {
+        background: $mutedGreen;
+    }
+
+    &[data-color="Black Red"] {
+        background: linear-gradient(135deg, $mutedBlack 0%, $mutedRed 100%);
+        color: $white;
+    }
+
+    &[data-color="Black Green"] {
+        background: linear-gradient(135deg, $mutedBlack 0%, $mutedGreen 100%);
+        color: $white;
+    }
+
+    &[data-color="White Blue"] {
+        background: linear-gradient(135deg, $sand 0%, $mutedBlue 100%);
+    }
+
+    &[data-color="White Black"] {
+        background: linear-gradient(135deg, $sand 0%, $mutedBlack 100%);
+    }
+
+    &[data-color="White Red"] {
+        background: linear-gradient(135deg, $sand 0%, $mutedRed 100%);
+    }
+
+    &[data-color="Blue Red"] {
+        background: linear-gradient(135deg, $mutedBlue 0%, $mutedRed 100%);
+    }
+
+    &[data-color="Red Green"] {
+        background: linear-gradient(135deg, $mutedRed 0%, $mutedGreen 100%);
+    }
+
+    &[data-color="Blue Black"] {
+        background: linear-gradient(135deg, $mutedBlue 0%, $mutedBlack 100%);
+    }
+
+    &[data-color="Blue Green"] {
+        background: linear-gradient(135deg, $mutedGreen 0%, $mutedBlue 100%);
+    }
+
+    &[data-color="White Green"] {
+        background: linear-gradient(135deg, $sand 0%, $mutedGreen 100%);
+    }
+
+    &[data-type="Land"] {
+        background: $mutedRust;
+    }
+
+    &[data-type="Artifact"],
+    &[data-type="Artifact Creature"] {
+        background: $mutedWhite;
+    }
+}
