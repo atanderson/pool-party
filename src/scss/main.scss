@@ -11,7 +11,7 @@ $mutedRust: #EBE0D6;
 
 .card {
     cursor: pointer;
-    height: 50px;
+    height: 250px;
 
     &[data-color="White"] {
         background: $sand;
@@ -84,4 +84,8 @@ $mutedRust: #EBE0D6;
     &[data-type="Artifact Creature"] {
         background: $mutedWhite;
     }
+}
+
+.deck.bin {
+    display: flex;
 }

@@ -150,7 +150,7 @@ var Controls = React.createClass({
     render: function(){
         var self = this;
         var pool = this.state.visiblePool.map(function(card, i){
-            return <Card data={card} key={i} onClick={self.addToDeck}/>
+            return <Card className="card col-sm-2" data={card} key={i} onClick={self.addToDeck}/>
         });
         return (
             <div className="deck row row-collapse">
