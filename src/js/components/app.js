@@ -5,8 +5,18 @@ var App = React.createClass({
     render: function(){
         return (
             <div className="container">
-                <h1>Sealed Deck Generator</h1>
-                <Controls />
+                <nav className="navbar navbar-default">
+                    <div className="container-fluid">
+                        <div className="navbar-header">
+                            <a className="navbar-brand" href="#">
+                                Sealed Deck Generator
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+                <div className="row">
+                    <Controls/>
+                </div>
             </div>
         )
     }

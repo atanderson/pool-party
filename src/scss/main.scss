@@ -11,81 +11,109 @@ $mutedRust: #EBE0D6;
 
 .card {
     cursor: pointer;
-    height: 250px;
 
-    &[data-color="White"] {
-        background: $sand;
+    &[data-display-mode="text"] {
+        height: 50px;
+        
+        &[data-color="White"] .inner{
+            background: $sand;
+        }
+
+        &[data-color="Blue"] .inner{
+            background: $mutedBlue;
+        }
+
+        &[data-color="Black"] .inner{
+            background: $mutedBlack;
+            color: $white;
+        }
+
+        &[data-color="Red"] .inner{
+            background: $mutedRed;
+        }
+
+        &[data-color="Green"] .inner{
+            background: $mutedGreen;
+        }
+
+        &[data-color="Black Red"] .inner{
+            background: linear-gradient(135deg, $mutedBlack 0%, $mutedRed 100%);
+            color: $white;
+        }
+
+        &[data-color="Black Green"] .inner{
+            background: linear-gradient(135deg, $mutedBlack 0%, $mutedGreen 100%);
+            color: $white;
+        }
+
+        &[data-color="White Blue"] .inner{
+            background: linear-gradient(135deg, $sand 0%, $mutedBlue 100%);
+        }
+
+        &[data-color="White Black"] .inner{
+            background: linear-gradient(135deg, $sand 0%, $mutedBlack 100%);
+        }
+
+        &[data-color="White Red"] .inner{
+            background: linear-gradient(135deg, $sand 0%, $mutedRed 100%);
+        }
+
+        &[data-color="Blue Red"] .inner{
+            background: linear-gradient(135deg, $mutedBlue 0%, $mutedRed 100%);
+        }
+
+        &[data-color="Red Green"] .inner{
+            background: linear-gradient(135deg, $mutedRed 0%, $mutedGreen 100%);
+        }
+
+        &[data-color="Blue Black"] .inner{
+            background: linear-gradient(135deg, $mutedBlue 0%, $mutedBlack 100%);
+        }
+
+        &[data-color="Blue Green"] {
+            background: linear-gradient(135deg, $mutedGreen 0%, $mutedBlue 100%);
+        }
+
+        &[data-color="White Green"] .inner{
+            background: linear-gradient(135deg, $sand 0%, $mutedGreen 100%);
+        }
+
+        &[data-type="Land"] .inner{
+            background: $mutedRust;
+        }
+
+        &[data-type="Artifact"] .inner,
+        &[data-type="Artifact Creature"] .inner {
+            background: $mutedWhite;
+        }
+
     }
 
-    &[data-color="Blue"] {
-        background: $mutedBlue;
-    }
-
-    &[data-color="Black"] {
-        background: $mutedBlack;
-        color: $white;
-    }
-
-    &[data-color="Red"] {
-        background: $mutedRed;
-    }
-
-    &[data-color="Green"] {
-        background: $mutedGreen;
-    }
-
-    &[data-color="Black Red"] {
-        background: linear-gradient(135deg, $mutedBlack 0%, $mutedRed 100%);
-        color: $white;
-    }
-
-    &[data-color="Black Green"] {
-        background: linear-gradient(135deg, $mutedBlack 0%, $mutedGreen 100%);
-        color: $white;
-    }
-
-    &[data-color="White Blue"] {
-        background: linear-gradient(135deg, $sand 0%, $mutedBlue 100%);
-    }
-
-    &[data-color="White Black"] {
-        background: linear-gradient(135deg, $sand 0%, $mutedBlack 100%);
-    }
-
-    &[data-color="White Red"] {
-        background: linear-gradient(135deg, $sand 0%, $mutedRed 100%);
-    }
-
-    &[data-color="Blue Red"] {
-        background: linear-gradient(135deg, $mutedBlue 0%, $mutedRed 100%);
-    }
-
-    &[data-color="Red Green"] {
-        background: linear-gradient(135deg, $mutedRed 0%, $mutedGreen 100%);
-    }
-
-    &[data-color="Blue Black"] {
-        background: linear-gradient(135deg, $mutedBlue 0%, $mutedBlack 100%);
-    }
-
-    &[data-color="Blue Green"] {
-        background: linear-gradient(135deg, $mutedGreen 0%, $mutedBlue 100%);
-    }
-
-    &[data-color="White Green"] {
-        background: linear-gradient(135deg, $sand 0%, $mutedGreen 100%);
-    }
-
-    &[data-type="Land"] {
-        background: $mutedRust;
-    }
-
-    &[data-type="Artifact"],
-    &[data-type="Artifact Creature"] {
-        background: $mutedWhite;
+    &[data-display-mode="images"] {
+        img {
+            max-height: 250px;
+            width: 100%;
+        }
     }
 }
 
 .deck.bin {
     display: flex;
+    > div {
+        flex: 1;
+    }
+}
+
+.column {
+    .card[data-display-mode="images"]:nth-child(n+3){
+        margin-top: -125px;
+    }
+    .card[data-display-mode="images"]:hover {
+        position: relative;
+        z-index: 2;
+    }
+}
+
+.legend {
+    text-align: center;
 }

@@ -7,7 +7,7 @@ var Deck = React.createClass({
         var self = this;
         var deck = this.props.data.map(function(card, i){
             return (
-                <Card className="card" data={card} key={i} onClick={self.props.addToPool}/>
+                <Card className="card col-sm-12" displayMode={self.props.displayMode} data={card} key={i} onClick={self.props.addToPool}/>
             )
         });
 
@@ -25,22 +25,18 @@ var Deck = React.createClass({
 
         var deckColumns = _.map( groupByIndex(deck, getCMC) , function(column, i){
             return (
-                <div className="deck-column">
+                <div className="column">
+                    <div className="legend col-sm-12">{i}</div>
                     {column}
                 </div>
             )
         });
 
         return (
-            <div>
-                <div className="col-sm-12 sorting deck">
-                    <h2>Deck</h2>
-                    <div className="deck bin">
-                        {deckColumns}
-                    </div>
-                </div>
-                <div className="col-sm-12 deck">
-                   
+            <div className="row">
+                <h2 className="col-sm-12">Deck</h2>
+                <div className="col-sm-12 deck bin">
+                    {deckColumns}
                 </div>
             </div>
         )

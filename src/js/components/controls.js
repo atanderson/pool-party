@@ -1,7 +1,8 @@
 var React = require('react');
 var Card = require('./card');
 var Data = require('../stores/ORI.json');
-var Deck = require('./deck')
+var Deck = require('./deck');
+var Pool = require('./pool');
 var _ = require('lodash');
 
 var Controls = React.createClass({
@@ -9,7 +10,8 @@ var Controls = React.createClass({
         return {
             visiblePool: [],
             storedPool: [],
-            deck: []
+            deck: [],
+            displayMode: 'text'
         }
     },
     generatePool: function(){
@@ -118,6 +120,18 @@ var Controls = React.createClass({
             storedPool: []
         });
     },
+    toggleDisplay: function(){
+        var self = this;
+        if (self.state.displayMode == 'text'){
+            self.setState({
+                displayMode: 'images'
+            });
+        } else if (self.state.displayMode == 'images'){
+            self.setState({
+                displayMode: 'text'
+            });
+        }
+    },
     addToDeck: function(card){
         var self = this;
         //store so state is not modified directly
@@ -148,42 +162,27 @@ var Controls = React.createClass({
         });
     },
     render: function(){
-        var self = this;
-        var pool = this.state.visiblePool.map(function(card, i){
-            return <Card className="card col-sm-2" data={card} key={i} onClick={self.addToDeck}/>
-        });
         return (
-            <div className="deck row row-collapse">
-                <div className="col-sm-3">
-                    <label htmlFor="packs">Number of packs</label>
-                    <div className="input-group">
-                        <input id="packs" min="1" defaultValue="6" className="form-control" type="number" ref="packNumber" />
-                        <span className="input-group-btn">
-                            <button className="btn btn-danger" onClick={this.generatePool}>generate</button>
-                        </span>
+            <div className="deck col-sm-12">
+                <div className="row">
+                    <div className="col-sm-3">
+                        <label htmlFor="display-mode">Card Display Mode</label>
+                        <div className="input-group">
+                            <button className="btn btn-danger" onClick={this.toggleDisplay}>{this.state.displayMode}</button>
+                        </div>
+                    </div>
+                    <div className="col-sm-3">
+                        <label htmlFor="packs">Number of Packs</label>
+                        <div className="input-group">
+                            <input id="packs" min="1" defaultValue="6" className="form-control" type="number" ref="packNumber" />
+                            <span className="input-group-btn">
+                                <button className="btn btn-danger" onClick={this.generatePool}>generate</button>
+                            </span>
+                        </div>
                     </div>
                 </div>
-                <Deck data={this.state.deck} sortDeck={this.sortDeck} addToPool={this.addToPool}/>
-                <div className="col-sm-12 sorting pool">
-                    <h2>Pool</h2>
-                    <button className="btn btn-info" onClick={this.sortPool.bind(null, 'cmc')}>sort by CMC</button>
-                    <button className="btn btn-info" onClick={this.sortPool.bind(null, 'rarity')}>sort by rarity</button>
-                    <button className="btn btn-info" onClick={this.sortPool.bind(null, 'colors')}>sort by color</button>
-                    <button className="btn btn-info" onClick={this.sortPool.bind(null, 'type')}>sort by type</button>
-                    <button className="btn btn-info" onClick={this.sortPool.bind(null, 'name')}>sort by name</button>
-                </div>
-                <div className="col-sm-12 filtering pool">
-                    <button className="btn btn-info" onClick={this.filterColor.bind(null, 'Red')}>red cards</button>
-                    <button className="btn btn-info" onClick={this.filterColor.bind(null, 'Blue')}>blue cards</button>
-                    <button className="btn btn-info" onClick={this.filterColor.bind(null, 'Black')}>black cards</button>
-                    <button className="btn btn-info" onClick={this.filterColor.bind(null, 'Green')}>green cards</button>
-                    <button className="btn btn-info" onClick={this.filterColor.bind(null, 'White')}>white cards</button>
-                    <button className="btn btn-info" onClick={this.filterColor.bind(null, 'colorless')}>colorless cards</button>
-                    <button className="btn btn-info" onClick={this.resetFilter}>reset filter</button>
-                </div>
-                <div className="col-sm-12 pool active">
-                    {pool}
-                </div>
+                {this.state.deck.length > 0 ? <Deck displayMode={this.state.displayMode} data={this.state.deck} sortDeck={this.sortDeck} addToPool={this.addToPool}/> : null}
+                {this.state.visiblePool.length > 0 ? <Pool filterColor={this.filterColor} displayMode={this.state.displayMode} data={this.state.visiblePool} sortPool={this.sortPool} addToDeck={this.addToDeck} />: null}
             </div>
         )
     }
