@@ -1,8 +1,8 @@
 {
   "name": "sealed",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "authors": [
-    "Andrew Anderson <andrew.anderson@crystalcommerce.com>"
+    "Andrew Anderson <ata5696@gmail.com>"
   ],
   "license": "MIT",
   "ignore": [
@@ -14,6 +14,7 @@
   ],
   "dependencies": {
     "bootstrap": "~3.3.5",
-    "isotope": "~2.2.1"
+    "isotope": "~2.2.1",
+    "keyrune": "*"
   }
 }

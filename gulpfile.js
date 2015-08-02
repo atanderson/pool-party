@@ -21,6 +21,10 @@ gulp.task('scss', function(){
 gulp.task('move', function(){
     gulp.src('./src/*.html')
         .pipe(gulp.dest('./build'));
+    gulp.src('./bower_components/bootstrap/js/modal.js')
+        .pipe(gulp.dest('./build/js'))
+    gulp.src(['./bower_components/keyrune/fonts/*', './src/vendor/mana/fonts/*', './bower_components/bootstrap/fonts/*'])
+        .pipe(gulp.dest('./build/fonts'))
 });
 
 gulp.task('img', function(){

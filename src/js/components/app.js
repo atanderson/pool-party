@@ -1,3 +1,7 @@
+/*
+    Generic wrapper for router if needed
+*/
+
 var React = require('react');
 var Controls = require('./controls');
 

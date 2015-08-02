@@ -1,26 +1,24 @@
 {
   "name": "sealed",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Andrew Anderson <ata5696@gmail.com>",
+  "license": "MIT",
   "devDependencies": {
     "bower": "^1.4.1",
+    "browsernizr": "^1.0.2",
     "gulp-browserify": "^0.5.1",
     "gulp-concat": "^2.6.0",
     "gulp-import-css": "^0.1.2",
-    "gulp-scss": "^1.2.0",
-    "isotope-layout": "^2.2.1",
+    "gulp-sass": "^2.0.4",
+    "jquery-browserify": "^1.8.1",
     "lodash": "^3.10.0",
     "react": "^0.13.3",
     "reactify": "^1.1.1",
     "underscore": "^1.8.3"
-  },
-  "dependencies": {
-    "gulp-sass": "^2.0.4"
   }
 }

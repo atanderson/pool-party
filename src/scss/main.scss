@@ -1,116 +1,318 @@
-@import url('../../bower_components/bootstrap/dist/css/bootstrap.min.css');
+//This whole file needs to be cleaned up badly
+
+@import url('../vendor/bootstrap/bootstrap.min.css');
+@import url('../../bower_components/keyrune/css/keyrune.min.css');
+@import url('../vendor/mana/css/mana.css');
 
 $white: #FFFFFF;
 $sand: #FFFFEB;
-$mutedBlue: #94B8FF;
-$mutedBlack: #333333;
-$mutedRed: #FF8484;
-$mutedGreen: #80E6B2;
+$mutedBlue: #A9C6FF;
+$mutedBlack: #555555;
+$mutedRed: #FFB1B1;
+$mutedGreen: #99EBC1;
 $mutedWhite: #EEEEEE;
 $mutedRust: #EBE0D6;
+$mutedGold: #E6B85C;
+$gold: #FFCC00;
+
+$colors: (
+    White: $sand,
+    Blue: $mutedBlue,
+    Black: $mutedBlack,
+    Red: $mutedRed,
+    Green: $mutedGreen,
+    Artifact: $mutedWhite,
+    Land: $mutedRust,
+);
+
+@mixin monoPanel($color){
+    &[data-color="#{$color}"] .inner{
+        > div {
+            @if $color == 'White' {
+                border: 1px solid $mutedGold;
+            } @else {
+                border: 1px solid desaturate(darken(map-get($colors, $color), 25), 25);
+            }
+            padding: 0 .5rem;
+        }
+        .heading {
+            background: map-get($colors, $color);
+            border-top-right-radius: 5px;
+            border-top-left-radius: 5px;
+            @if $color == "Black" {
+                color: $white;
+            }
+            height: 25px;
+            overflow: hidden;
+        }
+        .info {
+            border-bottom-right-radius: 2px;
+            border-bottom-left-radius: 2px;
+            border-top: 0;
+            height: 50px;
+            overflow: hidden;
+            position: absolute;
+            left: 15px;
+            right: 15px;
+
+            .pandt {
+                @if $color == 'White' {
+                    border-top: 1px solid $mutedGold;
+                    border-left: 1px solid $mutedGold;
+                } @else {
+                    border-top: 1px solid desaturate(darken(map-get($colors, $color), 25), 25);
+                    border-left: 1px solid desaturate(darken(map-get($colors, $color), 25), 25);
+                }
+            }
+        }
+    }
+}
+
+//todo merge with above
+@mixin typePanel($type){
+    &[data-type="#{$type}"] .inner{
+        > div {
+            border: 1px solid desaturate(darken(map-get($colors, $type), 25), 25);
+            padding: 0 .5rem;
+        }
+        .heading {
+            background: map-get($colors, $type);
+            border-top-right-radius: 5px;
+            border-top-left-radius: 5px;
+            height: 25px;
+            overflow: hidden;
+        }
+        .info {
+            border-bottom-right-radius: 2px;
+            border-bottom-left-radius: 2px;
+            border-top: 0;
+            height: 50px;
+            overflow: hidden;
+            position: absolute;
+            left: 15px;
+            right: 15px;
+
+            .pandt {
+                border-top: 1px solid desaturate(darken(map-get($colors, $type), 25), 25);
+                border-left: 1px solid desaturate(darken(map-get($colors, $type), 25), 25);
+            }
+        }
+    }
+}
+
+@mixin doublePanel($color1, $color2){
+    &[data-color="#{$color1 $color2}"] .inner{
+        > div {
+            @if lightness(map-get($colors, $color1)) > lightness(map-get($colors, $color2)) {
+                border: 1px solid desaturate(darken(map-get($colors, $color2), 25), 25);
+            }
+            @if lightness(map-get($colors, $color1)) < lightness(map-get($colors, $color2)) {
+                border: 1px solid desaturate(darken(map-get($colors, $color1), 25), 25);
+            }
+            padding: 0 .5rem;
+        }
+        .heading {
+            background: linear-gradient(135deg, map-get($colors, $color1) 0%, map-get($colors, $color2) 100%);
+            border-top-right-radius: 5px;
+            border-top-left-radius: 5px;
+            @if $color1 == "Black" {
+                color: $white;
+            }
+            height: 25px;
+            overflow: hidden;
+        }
+        .info {
+            border-bottom-right-radius: 2px;
+            border-bottom-left-radius: 2px;
+            border-top: 0;
+            height: 50px;
+            overflow: hidden;
+            position: absolute;
+            left: 15px;
+            right: 15px;
+
+            .pandt {
+                @if lightness(map-get($colors, $color1)) > lightness(map-get($colors, $color2)) {
+                    border-top: 1px solid desaturate(darken(map-get($colors, $color2), 25), 25);
+                    border-left: 1px solid desaturate(darken(map-get($colors, $color2), 25), 25);
+                }
+                @if lightness(map-get($colors, $color1)) < lightness(map-get($colors, $color2)) {
+                    border-top: 1px solid desaturate(darken(map-get($colors, $color1), 25), 25);
+                    border-left: 1px solid desaturate(darken(map-get($colors, $color1), 25), 25);
+                }
+            }            
+        }
+    }
+}
 
 .card {
     cursor: pointer;
 
+    .inner {
+        height: 75px;
+    }
+
+    &[data-expanded="true"] {
+        z-index: 4;
+        transform: scale(1.1);
+        .info {
+            height: auto!important;
+            min-height: 145px;
+            padding-bottom: 5px!important;
+        }
+    }
+
+    .heading {
+        i {
+            line-height: 1.4em;
+        }
+    }
+
     &[data-display-mode="text"] {
-        height: 50px;
+        margin-top: 1em;
+        position: relative;
+        transition: height .5s linear;
+
+        &:hover {
+            z-index: 3;
+        }
+
+        .info {
+            background: $white;
+            transition: height .5s linear;
+        }
+
+        //Mono colored cards
+        @include monoPanel("White");
+        @include monoPanel("Blue");
+        @include monoPanel("Black");
+        @include monoPanel("Red");
+        @include monoPanel("Green");
         
-        &[data-color="White"] .inner{
-            background: $sand;
-        }
+        @include typePanel("Artifact");
+        @include typePanel("Land");
 
-        &[data-color="Blue"] .inner{
-            background: $mutedBlue;
-        }
+        //Two color cards
+        @include doublePanel("Black", "Red");
+        @include doublePanel("Black", "Green");
+        @include doublePanel("White", "Blue");
+        @include doublePanel("White", "Black");
+        @include doublePanel("White", "Red");
+        @include doublePanel("Blue", "Red");
+        @include doublePanel("Red", "Green");
+        @include doublePanel("Blue", "Black");
+        @include doublePanel("Blue", "Green");
+        @include doublePanel("White", "Green");
 
-        &[data-color="Black"] .inner{
-            background: $mutedBlack;
-            color: $white;
-        }
+        .card-prop {
+            display: block;
+            width: 100%;
+            float: left;
 
-        &[data-color="Red"] .inner{
-            background: $mutedRed;
-        }
+            &.type {
+                font-size: .8em;
+                line-height: 2em;
+            }
 
-        &[data-color="Green"] .inner{
-            background: $mutedGreen;
+            &.pandt {
+                position: absolute;
+                border-top-left-radius: 2px;
+                bottom: 0px;
+                right: 0px;
+                text-align: center;
+                background: $white;
+                width: 35px;
+                z-index: 2;
+            }
         }
+    }
 
-        &[data-color="Black Red"] .inner{
-            background: linear-gradient(135deg, $mutedBlack 0%, $mutedRed 100%);
-            color: $white;
-        }
-
-        &[data-color="Black Green"] .inner{
-            background: linear-gradient(135deg, $mutedBlack 0%, $mutedGreen 100%);
-            color: $white;
-        }
-
-        &[data-color="White Blue"] .inner{
-            background: linear-gradient(135deg, $sand 0%, $mutedBlue 100%);
-        }
-
-        &[data-color="White Black"] .inner{
-            background: linear-gradient(135deg, $sand 0%, $mutedBlack 100%);
-        }
-
-        &[data-color="White Red"] .inner{
-            background: linear-gradient(135deg, $sand 0%, $mutedRed 100%);
-        }
-
-        &[data-color="Blue Red"] .inner{
-            background: linear-gradient(135deg, $mutedBlue 0%, $mutedRed 100%);
-        }
-
-        &[data-color="Red Green"] .inner{
-            background: linear-gradient(135deg, $mutedRed 0%, $mutedGreen 100%);
-        }
-
-        &[data-color="Blue Black"] .inner{
-            background: linear-gradient(135deg, $mutedBlue 0%, $mutedBlack 100%);
-        }
-
-        &[data-color="Blue Green"] {
-            background: linear-gradient(135deg, $mutedGreen 0%, $mutedBlue 100%);
-        }
-
-        &[data-color="White Green"] .inner{
-            background: linear-gradient(135deg, $sand 0%, $mutedGreen 100%);
-        }
-
-        &[data-type="Land"] .inner{
-            background: $mutedRust;
-        }
-
-        &[data-type="Artifact"] .inner,
-        &[data-type="Artifact Creature"] .inner {
-            background: $mutedWhite;
-        }
-
+    .card-img-wrapper[data-foil='true']::after{
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 15px;
+        right: 15px;
+        border-radius: 9px;
+        background: linear-gradient(-45deg, 
+                    rgba(255,0,0,0.6) 0%,
+                    rgba(255,153,0,0.5) 15%,
+                    rgba(238,255,0,0.4) 30%,
+                    rgba(89,255,0,0.3) 50%,
+                    rgba(0,246,255,0.2) 60%,
+                    rgba(0,144,255,0.4) 75%,
+                    rgba(196,124,255,0.5) 90%,
+                    rgba(196,124,255,0.6) 100%);
     }
 
     &[data-display-mode="images"] {
         img {
             max-height: 250px;
             width: 100%;
+            position: relative;
+        }
+        &:hover {
+            position: relative;
+            transform: scale(1.02);
         }
     }
+}
+
+textarea {
+    width: 100%;
+    max-width: 100%;
+}
+
+.ss {
+    font-size: 1.3em;
+    line-height: 1.3em;
+}
+
+.ss-pmei {
+    font-size: 2em;
+    max-height: 23px;
+    line-height: 1em;
 }
 
 .deck.bin {
     display: flex;
     > div {
         flex: 1;
+        max-width: 20%;
+    }
+}
+
+.pool-cards {
+    padding-top: 1em;
+}
+
+.pool .card-image {
+    width: 16.666666%;
+    float: left;
+    padding: 0 15px;
+    margin: .5em 0;
+    position: relative;
+    img,
+    .card-img-wrapper {
+        width: 100%;
+    }
+}
+
+.deck {
+    .card-image,
+    img,
+    .card-img.wrapper{
+        width: 100%;
+    }
+    .card-image {
+        padding: 0 15px;
     }
 }
 
 .column {
     .card[data-display-mode="images"]:nth-child(n+3){
         margin-top: -125px;
-    }
-    .card[data-display-mode="images"]:hover {
-        position: relative;
-        z-index: 2;
     }
 }
 

@@ -1,28 +1,86 @@
-var React = require('react');
+/*
+    Represents a single card
+    Cards have two display modes that are controlled via top-level state
+*/
+
+var React = require('react'),
+    helpers = require('../utils/utils'); //manaCostToIcon, rulesTextToIcon
 
 var Card = React.createClass({
+    getInitialState: function(){
+        return {
+            expanded: false
+        }
+    },
+    expand: function(){
+        //state toggle to expand/zoom in on card information
+        if (this.state.expanded){
+            this.setState({
+                expanded: false
+            })
+        } else {
+            this.setState({
+                expanded: true
+            })
+        }
+    },
     render: function(){
-        var imgSlug = 'img/ORI/' + this.props.data.name.toLowerCase().replace(/ /g, '-').replace(/,/g, '').replace(/'/g, '').replace(/æ/g, 'ae') + '.png';
-        var display;
+        //name separated out so set switching can be implemented in the future
+        var setName = 'ori',
+            display;//holds the actual card markup
+
+        //Textual card display
         if (this.props.displayMode == 'text'){
+            //string needed for the set/rarity icon
+            var iconSlug = 'ss ss-grad ss-' + setName + ' ss-' + this.props.data.rarity.toLowerCase();
+
             display = (
                 <div className="inner">
-                    <div>{this.props.data.name}</div>
-                    <div>{this.props.data.manaCost} - {this.props.data.rarity[0]}</div>
+                    {/* clicking on this heading adds/removes card from pool/deck */}
+                    <div onClick={this.props.onClick.bind(null, this.props.data)}  className="heading">
+                        {this.props.data.name} 
+                        <span className="pull-right">+</span>
+                    </div>
+                    {/* clicking on the text area expands/collapses the card */}
+                    <div className="info" onClick={this.expand}>
+                        <span className="card-prop">
+                            <span className="pull-left">
+                                <i className={iconSlug}></i>
+                                {/* foil indicator */}
+                                {this.props.data.foil ? <i className="ss ss-pmei"></i> : null}
+                            </span>
+                            <span className="pull-right">
+                                {/* If the card has a manacost, turn the mana symbols into icons */}
+                                {this.props.data.manaCost ? helpers.manaCostToIcon(this.props.data.manaCost) : null}
+                            </span>
+                            <span className="card-prop type">{this.props.data.type}</span>
+                        </span>
+                        {/* If the card is expanded, show all the rules text with mana/tap icons */}
+                        {this.state.expanded ? <span className="card-prop">{this.props.data.text ? helpers.rulesTextToIcon(this.props.data.text) : null}</span> : null}
+                        {this.props.data.power ? <span className="card-prop pandt">{this.props.data.power}/{this.props.data.toughness}</span> : null }
+                    </div>
                 </div>
             )
+        //Card image with minimal wrapper
         } else if (this.props.displayMode == 'images'){
+            //Convert the card name into a viable filename string
+            var imgSlug = 'img/' + setName + '/' + this.props.data.imageName.replace(/ /g, '-').replace(/(,|'|:|;|!)/g, '').replace(/æ/g, 'ae') + '.png',
+
             display = (
-                <img src={imgSlug} />
+                <div className="card-img-wrapper" onClick={this.props.onClick.bind(null, this.props.data)} data-foil={this.props.data.foil ? this.props.data.foil : false}>
+                    <img src={imgSlug} />
+                </div>
             )
         }
+
+        //Put the mode-specific display markup in a consistant wrapper
         return (
-            <div className={this.props.className}
+            <div className={this.props.displayMode == 'text' ? this.props.className : 'card card-image'}
+                data-expanded={this.state.expanded}
                 data-display-mode={this.props.displayMode}
-                data-type={this.props.data.type ? this.props.data.types.join(' ') : null}
-                data-color={this.props.data.colors ? this.props.data.colors.join(' ') : null}
-                onClick={this.props.onClick.bind(null, this.props.data)}
-            >
+                data-type={this.props.data.type ? this.props.data.types[0] : null}
+                data-color={this.props.data.colors ? this.props.data.colors.join(' ') : null}>
+                
                 {display}
             </div>
         )
