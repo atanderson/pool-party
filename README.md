@@ -1,4 +1,4 @@
-#Pool Party version 0.1
+#Pool Party version 0.2
 
 ##About
 

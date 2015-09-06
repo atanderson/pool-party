@@ -26,7 +26,7 @@ var Card = React.createClass({
     },
     render: function(){
         //name separated out so set switching can be implemented in the future
-        var setName = 'ori',
+        var setName = this.props.data.set,
             display;//holds the actual card markup
 
         //Textual card display
@@ -47,7 +47,8 @@ var Card = React.createClass({
                             <span className="pull-left">
                                 <i className={iconSlug}></i>
                                 {/* foil indicator */}
-                                {this.props.data.foil ? <i className="ss ss-pmei"></i> : null}
+                                {this.props.data.foil ? <i className="ss ss-pmei"></i> 
+                                                      : null}
                             </span>
                             <span className="pull-right">
                                 {/* If the card has a manacost, turn the mana symbols into icons */}
@@ -56,8 +57,11 @@ var Card = React.createClass({
                             <span className="card-prop type">{this.props.data.type}</span>
                         </span>
                         {/* If the card is expanded, show all the rules text with mana/tap icons */}
-                        {this.state.expanded ? <span className="card-prop">{this.props.data.text ? helpers.rulesTextToIcon(this.props.data.text) : null}</span> : null}
-                        {this.props.data.power ? <span className="card-prop pandt">{this.props.data.power}/{this.props.data.toughness}</span> : null }
+                        {this.state.expanded ? <span className="card-prop">{this.props.data.text ? helpers.rulesTextToIcon(this.props.data.text) : null}</span> 
+                                             : null}
+
+                        {this.props.data.power ? <span className="card-prop pandt">{this.props.data.power}/{this.props.data.toughness}</span> 
+                                               : null }
                     </div>
                 </div>
             )
@@ -67,8 +71,13 @@ var Card = React.createClass({
             var imgSlug = 'img/' + setName + '/' + this.props.data.imageName.replace(/ /g, '-').replace(/(,|'|:|;|!)/g, '').replace(/æ/g, 'ae') + '.png',
 
             display = (
-                <div className="card-img-wrapper" onClick={this.props.onClick.bind(null, this.props.data)} data-foil={this.props.data.foil ? this.props.data.foil : false}>
-                    <img src={imgSlug} />
+                <div className="card-img-wrapper" data-foil={this.props.data.foil ? this.props.data.foil : false}>
+                    {!this.state.expanded ?
+                        <div className="expand above-overlay" onClick={this.expand}>
+                            <i className="glyphicon glyphicon-zoom-in"></i>
+                        </div>
+                    : null}
+                    <img onClick={this.state.expanded ? this.expand : this.props.onClick.bind(null, this.props.data)} src={imgSlug} />
                 </div>
             )
         }
@@ -79,7 +88,7 @@ var Card = React.createClass({
                 data-expanded={this.state.expanded}
                 data-display-mode={this.props.displayMode}
                 data-type={this.props.data.type ? this.props.data.types[0] : null}
-                data-color={this.props.data.colors ? this.props.data.colors.join(' ') : null}>
+                data-color={this.props.data.colors ? this.props.data.colors.join(' ') : 'colorless'}>
                 
                 {display}
             </div>

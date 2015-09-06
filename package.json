@@ -9,8 +9,10 @@
   "author": "Andrew Anderson <ata5696@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "axios": "^0.5.4",
     "bower": "^1.4.1",
     "browsernizr": "^1.0.2",
+    "finalhandler": "^0.4.0",
     "gulp-browserify": "^0.5.1",
     "gulp-concat": "^2.6.0",
     "gulp-import-css": "^0.1.2",
@@ -19,6 +21,6 @@
     "lodash": "^3.10.0",
     "react": "^0.13.3",
     "reactify": "^1.1.1",
-    "underscore": "^1.8.3"
+    "serve-static": "^1.10.0",
   }
 }

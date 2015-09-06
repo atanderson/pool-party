@@ -1,20 +1,24 @@
-//This whole file needs to be cleaned up badly
+@import url('../vendor/bootstrap/bootstrap.min.css');// Base bootstrap
+@import url('../../bower_components/keyrune/css/keyrune.min.css');// Set symbols
+@import url('../vendor/mana/css/mana.css');// Mana&tap symbols
 
-@import url('../vendor/bootstrap/bootstrap.min.css');
-@import url('../../bower_components/keyrune/css/keyrune.min.css');
-@import url('../vendor/mana/css/mana.css');
+/* =============================================================================
+    COLOR VARIABLES
+============================================================================= */
 
-$white: #FFFFFF;
-$sand: #FFFFEB;
-$mutedBlue: #A9C6FF;
-$mutedBlack: #555555;
-$mutedRed: #FFB1B1;
-$mutedGreen: #99EBC1;
-$mutedWhite: #EEEEEE;
-$mutedRust: #EBE0D6;
-$mutedGold: #E6B85C;
-$gold: #FFCC00;
+$white:       #FFFFFF;
+$sand:        #FFFFEB;
+$mutedBlue:   #A9C6FF;
+$mutedBlack:  #555555;
+$mutedRed:    #FFB1B1;
+$mutedGreen:  #99EBC1;
+$mutedWhite:  #EEEEEE;
+$mutedRust:   #EBE0D6;
+$mutedGold:   #E6B85C;
+$gold:        #FFCC00;
+$smoke:       rgba(0,0,0,.5);
 
+// Map to associate card colors with the representative hexcodes
 $colors: (
     White: $sand,
     Blue: $mutedBlue,
@@ -23,217 +27,240 @@ $colors: (
     Green: $mutedGreen,
     Artifact: $mutedWhite,
     Land: $mutedRust,
+    colorless: $white
 );
 
-@mixin monoPanel($color){
-    &[data-color="#{$color}"] .inner{
-        > div {
-            @if $color == 'White' {
+/* =============================================================================
+    Mixins
+============================================================================= */
+
+// $baseColor should be the background color of the bordered element. $prop 
+// allows this to be used for border, border-top, etc (border shorthand when..?)
+@mixin darkDesaturateBorder($baseColor, $prop){
+    #{$prop}: 1px solid desaturate(darken($baseColor, 25) , 25);
+}
+
+// $key represents the key from the $colors map, $dataProp will either be color
+// or type to account for colorless cards
+@mixin monoPanel($key, $dataProp){
+
+    &[data-#{$dataProp}="#{$key}"] {
+
+        .heading,
+        .info {
+            @if $key == 'White' {
                 border: 1px solid $mutedGold;
             } @else {
-                border: 1px solid desaturate(darken(map-get($colors, $color), 25), 25);
+                @include darkDesaturateBorder(map-get($colors, $key), 'border');
             }
             padding: 0 .5rem;
         }
+
         .heading {
-            background: map-get($colors, $color);
-            border-top-right-radius: 5px;
+            background: map-get($colors, $key);
             border-top-left-radius: 5px;
-            @if $color == "Black" {
+            border-top-right-radius: 5px;
+            // Edge case for black so you can read the dang text
+            @if $key == "Black" {
                 color: $white;
             }
             height: 25px;
             overflow: hidden;
         }
+
         .info {
-            border-bottom-right-radius: 2px;
             border-bottom-left-radius: 2px;
+            border-bottom-right-radius: 2px;
             border-top: 0;
             height: 50px;
+            max-height: 50px;
             overflow: hidden;
-            position: absolute;
-            left: 15px;
-            right: 15px;
+            position: relative;
 
             .pandt {
-                @if $color == 'White' {
+
+                @if $key == 'White' {
                     border-top: 1px solid $mutedGold;
                     border-left: 1px solid $mutedGold;
                 } @else {
-                    border-top: 1px solid desaturate(darken(map-get($colors, $color), 25), 25);
-                    border-left: 1px solid desaturate(darken(map-get($colors, $color), 25), 25);
+                    @include darkDesaturateBorder(map-get($colors, $key), 'border-top');
+                    @include darkDesaturateBorder(map-get($colors, $key), 'border-left');
                 }
+
             }
         }
     }
 }
 
-//todo merge with above
-@mixin typePanel($type){
-    &[data-type="#{$type}"] .inner{
-        > div {
-            border: 1px solid desaturate(darken(map-get($colors, $type), 25), 25);
-            padding: 0 .5rem;
-        }
-        .heading {
-            background: map-get($colors, $type);
-            border-top-right-radius: 5px;
-            border-top-left-radius: 5px;
-            height: 25px;
-            overflow: hidden;
-        }
-        .info {
-            border-bottom-right-radius: 2px;
-            border-bottom-left-radius: 2px;
-            border-top: 0;
-            height: 50px;
-            overflow: hidden;
-            position: absolute;
-            left: 15px;
-            right: 15px;
-
-            .pandt {
-                border-top: 1px solid desaturate(darken(map-get($colors, $type), 25), 25);
-                border-left: 1px solid desaturate(darken(map-get($colors, $type), 25), 25);
-            }
-        }
-    }
-}
-
+// Used only for twocolor cards (NOT for three+ color cards). And yes, the order
+// of the color properties matters (blue green vs green blue)
 @mixin doublePanel($color1, $color2){
-    &[data-color="#{$color1 $color2}"] .inner{
-        > div {
-            @if lightness(map-get($colors, $color1)) > lightness(map-get($colors, $color2)) {
-                border: 1px solid desaturate(darken(map-get($colors, $color2), 25), 25);
-            }
-            @if lightness(map-get($colors, $color1)) < lightness(map-get($colors, $color2)) {
-                border: 1px solid desaturate(darken(map-get($colors, $color1), 25), 25);
-            }
-            padding: 0 .5rem;
+
+    &[data-color="#{$color1 $color2}"] {
+
+        .heading,
+        .info {
+                // Use the quantitatively darker color for the border
+                @if lightness(map-get($colors, $color1)) > lightness(map-get($colors, $color2)) {
+                    @include darkDesaturateBorder(map-get($colors, $color2), 'border');
+                }
+                @if lightness(map-get($colors, $color1)) < lightness(map-get($colors, $color2)) {
+                    @include darkDesaturateBorder(map-get($colors, $color1), 'border');
+                }
+                padding: 0 .5rem;
         }
+
         .heading {
             background: linear-gradient(135deg, map-get($colors, $color1) 0%, map-get($colors, $color2) 100%);
-            border-top-right-radius: 5px;
             border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            // Edge case for black so you can read the dang text
             @if $color1 == "Black" {
                 color: $white;
             }
             height: 25px;
             overflow: hidden;
         }
+
         .info {
-            border-bottom-right-radius: 2px;
             border-bottom-left-radius: 2px;
+            border-bottom-right-radius: 2px;
             border-top: 0;
             height: 50px;
+            max-height: 50px;
             overflow: hidden;
-            position: absolute;
-            left: 15px;
-            right: 15px;
+            position: relative;
 
             .pandt {
+
                 @if lightness(map-get($colors, $color1)) > lightness(map-get($colors, $color2)) {
+                    @include darkDesaturateBorder(map-get($colors, $color2), 'border-top');
+                    @include darkDesaturateBorder(map-get($colors, $color2), 'border-left');
                     border-top: 1px solid desaturate(darken(map-get($colors, $color2), 25), 25);
                     border-left: 1px solid desaturate(darken(map-get($colors, $color2), 25), 25);
                 }
+
                 @if lightness(map-get($colors, $color1)) < lightness(map-get($colors, $color2)) {
-                    border-top: 1px solid desaturate(darken(map-get($colors, $color1), 25), 25);
-                    border-left: 1px solid desaturate(darken(map-get($colors, $color1), 25), 25);
+                    @include darkDesaturateBorder(map-get($colors, $color1), 'border-top');
+                    @include darkDesaturateBorder(map-get($colors, $color1), 'border-left');
                 }
             }            
         }
     }
 }
 
+/* =============================================================================
+    Cards
+============================================================================= */
+
 .card {
     cursor: pointer;
+}
+
+// ============================== Text Mode ====================================
+
+// Only card panels should have this display mode
+[data-display-mode="text"] {
+    margin-top: 1em;
+    position: relative;
+
+    // Prevents z-index flash of the expanded card being under the 
+    // surrounding ones
+    &:hover {
+        z-index: 3;
+    }
 
     .inner {
         height: 75px;
     }
 
-    &[data-expanded="true"] {
-        z-index: 4;
-        transform: scale(1.1);
-        .info {
-            height: auto!important;
-            min-height: 145px;
-            padding-bottom: 5px!important;
-        }
+    .info {
+        background: $white;
     }
 
     .heading {
+
         i {
             line-height: 1.4em;
         }
+
     }
 
-    &[data-display-mode="text"] {
-        margin-top: 1em;
-        position: relative;
-        transition: height .5s linear;
+    // Don't re-order these otherwise colored artifacts will become
+    // artifact-colored (light grey)
+    @include monoPanel("colorless", 'color');
+    @include monoPanel("Artifact", 'type');
+    @include monoPanel("Land", 'type');
+    @include monoPanel("White", 'color');
+    @include monoPanel("Blue", 'color');
+    @include monoPanel("Black", 'color');
+    @include monoPanel("Red", 'color');
+    @include monoPanel("Green", 'color');
+    @include doublePanel("Black", "Red");
+    @include doublePanel("Black", "Green");
+    @include doublePanel("White", "Blue");
+    @include doublePanel("White", "Black");
+    @include doublePanel("White", "Red");
+    @include doublePanel("Blue", "Red");
+    @include doublePanel("Red", "Green");
+    @include doublePanel("Blue", "Black");
+    @include doublePanel("Blue", "Green");
+    @include doublePanel("White", "Green");
 
-        &:hover {
-            z-index: 3;
+    .card-prop {
+        display: block;
+        width: 100%;
+        float: left;
+
+        &.type {
+            font-size: .8em;
+            line-height: 2em;
         }
+
+        &.pandt {
+            background: $white;
+            border-top-left-radius: 2px;
+            position: absolute; bottom: 0px; right: 0px;
+            text-align: center;
+            width: 40px;
+            z-index: 2;
+        }
+    }
+
+    &[data-expanded="true"] {
+        transform: scale(1.1);
+        transition: transform .2s linear;
+        z-index: 4;
 
         .info {
-            background: $white;
-            transition: height .5s linear;
-        }
-
-        //Mono colored cards
-        @include monoPanel("White");
-        @include monoPanel("Blue");
-        @include monoPanel("Black");
-        @include monoPanel("Red");
-        @include monoPanel("Green");
-        
-        @include typePanel("Artifact");
-        @include typePanel("Land");
-
-        //Two color cards
-        @include doublePanel("Black", "Red");
-        @include doublePanel("Black", "Green");
-        @include doublePanel("White", "Blue");
-        @include doublePanel("White", "Black");
-        @include doublePanel("White", "Red");
-        @include doublePanel("Blue", "Red");
-        @include doublePanel("Red", "Green");
-        @include doublePanel("Blue", "Black");
-        @include doublePanel("Blue", "Green");
-        @include doublePanel("White", "Green");
-
-        .card-prop {
-            display: block;
-            width: 100%;
-            float: left;
-
-            &.type {
-                font-size: .8em;
-                line-height: 2em;
-            }
-
-            &.pandt {
-                position: absolute;
-                border-top-left-radius: 2px;
-                bottom: 0px;
-                right: 0px;
-                text-align: center;
-                background: $white;
-                width: 35px;
-                z-index: 2;
-            }
+            height: auto;
+            min-height: 50px;
+            max-height: 500px;
+            padding-bottom: 25px;
+            transition: max-height .2s linear;
         }
     }
 
-    .card-img-wrapper[data-foil='true']::after{
+    @media only screen and (max-width: 768px) {
+        width: 50%;
+        float: left;
+    }
+}
+
+// ============================= Image Mode ====================================
+
+// Only card panels should have this display mode
+[data-display-mode="images"] {
+
+    img {
+        width: 100%;
+        position: relative;
+    }
+    
+    // Rainbow overlay for foil cards
+    .card-img-wrapper[data-foil='true']::after {
         content: '';
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 15px;
-        right: 15px;
+        position: absolute; top: 0; left: 15px; bottom: 0; right: 15px;
         border-radius: 9px;
         background: linear-gradient(-45deg, 
                     rgba(255,0,0,0.6) 0%,
@@ -246,23 +273,42 @@ $colors: (
                     rgba(196,124,255,0.6) 100%);
     }
 
-    &[data-display-mode="images"] {
-        img {
-            max-height: 250px;
-            width: 100%;
-            position: relative;
+    &[data-expanded='true'].card-image {
+        border-radius: 7px;
+        transform: scale(1.5);
+        transition: transform .1s linear;
+        z-index: 2;
+
+        img{
+            -webkit-box-shadow: 2px 2px 10px 0px rgba(50, 50, 50, 0.4);
+            -moz-box-shadow:    2px 2px 10px 0px rgba(50, 50, 50, 0.4);
+            box-shadow:         2px 2px 10px 0px rgba(50, 50, 50, 0.4);
         }
-        &:hover {
-            position: relative;
-            transform: scale(1.02);
-        }
+    }
+
+    .above-overlay {
+        position: absolute;
+        z-index: 3;
+    }
+
+    .expand {
+        color: $white;
+        font-size: 1.4em;
     }
 }
 
+/* =============================================================================
+    Misc
+============================================================================= */
+
+// =============================== Modals ======================================
+
 textarea {
+    max-width: 100%; // Override browser behavior
     width: 100%;
-    max-width: 100%;
 }
+
+// ============================= Set Symbols ===================================
 
 .ss {
     font-size: 1.3em;
@@ -275,47 +321,111 @@ textarea {
     line-height: 1em;
 }
 
-.deck.bin {
-    display: flex;
-    > div {
-        flex: 1;
-        max-width: 20%;
+// =============================== Decklist ====================================
+
+.deck {
+    &.bin {
+       display: flex;
+       > div {
+           flex: 1;
+           max-width: 20%;
+       } 
+    }
+
+    .card-image,
+    img{
+        float: left;
+        width: 100%;
+    }
+
+    .card-image {
+        position: relative;
+    }
+
+    .card-img-wrapper{
+        position: relative;
+
+        &:hover {
+            .expand {
+                min-width: 45px;
+                min-height: 45px;
+                text-shadow: 0px 0px 2px rgba(0, 0, 0, 1);
+                display: block;
+                top: 1px;
+                left: 1px;
+            }
+        }
+    }
+
+    .card-image {
+        padding: 0 15px;
+    }
+
+    .column {
+        position: relative;
+        .card[data-display-mode="images"]:nth-child(n+3){
+            margin-top: -75%;
+        }
+    }
+    
+    //cmc indicator
+    .legend {
+        text-align: center;
+    }
+
+    .expand {
+        display: none;
     }
 }
+
+// =============================== Cardpool ====================================
 
 .pool-cards {
     padding-top: 1em;
 }
 
+.pool {
+    [data-display-mode='images'] {
+        &:hover .expand {
+            opacity: 1;
+        }
+
+        .expand {
+            opacity: 0;
+            text-shadow: 0px 0px 2px rgba(0, 0, 0, 1);
+            top: 1px;
+            left: 20px;
+
+            i {
+                vertical-align: middle;
+            }
+        }
+    }
+}
+
 .pool .card-image {
-    width: 16.666666%;
     float: left;
-    padding: 0 15px;
     margin: .5em 0;
+    padding: 0 15px;
     position: relative;
+    width: 16.666666%;
+
+    @media only screen and (max-width:75em) {
+        width: 20%;
+    }
+    
+    @media only screen and (max-width:40em) {
+        width: 33.333333%;
+    }
+
     img,
     .card-img-wrapper {
         width: 100%;
     }
 }
 
-.deck {
-    .card-image,
-    img,
-    .card-img.wrapper{
-        width: 100%;
-    }
-    .card-image {
-        padding: 0 15px;
-    }
-}
+// =============================== Controls ====================================
 
-.column {
-    .card[data-display-mode="images"]:nth-child(n+3){
-        margin-top: -125px;
-    }
-}
-
-.legend {
-    text-align: center;
+.set-select {
+    width: 20%;
 }

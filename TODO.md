@@ -1,8 +1,5 @@
 ##TODO
  - accuracy testing
- - more sets
- - expandable card images in pool
- - properly formatted lists for modo
- - xs column definitions
- - continuous addition bug
- - Reset emptying bug
+ - can return card to wrong color filtered pool
+ - adding foil cards to deck
+ - rarity sort ordering

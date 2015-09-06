@@ -5,7 +5,7 @@ importCss = require('gulp-import-css'),
 browserify = require('gulp-browserify');
 
 gulp.task('browserify', function(){
-    gulp.src('./src/js/*')
+    gulp.src(['./src/js/*', '!./src/js/sets/*'])
         .pipe(concat('bundle.js'))
         .pipe(browserify({'transform': 'reactify'}))
         .pipe(gulp.dest('./build/js'));
@@ -25,6 +25,8 @@ gulp.task('move', function(){
         .pipe(gulp.dest('./build/js'))
     gulp.src(['./bower_components/keyrune/fonts/*', './src/vendor/mana/fonts/*', './bower_components/bootstrap/fonts/*'])
         .pipe(gulp.dest('./build/fonts'))
+    gulp.src(['./src/js/sets/*'])
+        .pipe(gulp.dest('./build/sets'))
 });
 
 gulp.task('img', function(){

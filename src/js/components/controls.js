@@ -21,7 +21,8 @@ var Controls = React.createClass({
             visiblePool: [],
             storedPool: [],
             deck: [],
-            displayMode: 'text'
+            displayMode: 'text',
+            chosenSet: ''
         }
     },
     render: function(){
@@ -38,6 +39,12 @@ var Controls = React.createClass({
                     <div className="col-sm-5">
                         <label htmlFor="packs">Number of Packs</label>
                         <div className="input-group">
+                            <span className="input-group-btn set-select">
+                                <select id="set" min="1" className="form-control" ref="set">
+                                    <option value="ori">ORI</option>
+                                    <option value="mm2">MM2</option>
+                                </select>
+                            </span>
                             {/* determine the pool recipe and generate it */}
                             <input id="packs" min="1" defaultValue="6" className="form-control" type="number" ref="packNumber" />
                             <span className="input-group-btn">
